@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  name         String
+  role         String        @default("NURSE") // ADMIN, DOCTOR, NURSE, PHARMACIST, FINANCE, PATIENT
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointments Appointment[] @relation("DoctorAppointments")
+  prescriptions Prescription[] @relation("DoctorPrescriptions")
+  patient      Patient?
+}
+
+model Patient {
+  id           String         @id @default(uuid())
+  userId       String?        @unique
+  user         User?          @relation(fields: [userId], references: [id])
+  firstName    String
+  lastName     String
+  dob          DateTime
+  gender       String
+  contact      String
+  address      String
+  bloodGroup   String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  appointments Appointment[]
+  prescriptions Prescription[]
+  invoices     Invoice[]
+  labTests     LabTest[]
+}
+
+model Appointment {
+  id          String   @id @default(uuid())
+  patientId   String
+  doctorId    String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  doctor      User     @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  date        DateTime
+  status      String   @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  reason      String
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Drug {
+  id           String             @id @default(uuid())
+  name         String
+  description  String?
+  stock        Int                @default(0)
+  price        Float              @default(0.0)
+  expiryDate   DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  prescriptions PrescriptionItem[]
+}
+
+model Prescription {
+  id          String             @id @default(uuid())
+  patientId   String
+  doctorId    String
+  patient     Patient            @relation(fields: [patientId], references: [id])
+  doctor      User               @relation("DoctorPrescriptions", fields: [doctorId], references: [id])
+  status      String             @default("PENDING") // PENDING, DISPENSED
+  notes       String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  items       PrescriptionItem[]
+  invoice     Invoice?
+}
+
+model PrescriptionItem {
+  id             String       @id @default(uuid())
+  prescriptionId String
+  drugId         String
+  quantity       Int          @default(1)
+  dosage         String?
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
+  drug           Drug         @relation(fields: [drugId], references: [id])
+}
+
+model Invoice {
+  id             String       @id @default(uuid())
+  patientId      String
+  prescriptionId String?      @unique
+  patient        Patient      @relation(fields: [patientId], references: [id])
+  prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
+  amount         Float        @default(0.0)
+  status         String       @default("UNPAID") // UNPAID, PAID
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model LabTest {
+  id          String   @id @default(uuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  testType    String
+  result      String
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
