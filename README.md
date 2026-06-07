@@ -1,14 +1,51 @@
 # Hospital Administration & Patient Portal
 
-A comprehensive, full-stack Hospital Administration and Patient Management Portal. It integrates medical scheduling, prescription workflows, pharmacy stock management, billing invoices, and lab test results into a unified dashboard with role-based access control.
+A comprehensive, full-stack Hospital Administration and Patient Management Portal. It integrates medical scheduling, prescription workflows, pharmacy stock management, billing invoices, and lab tests.
 
 ---
 
-## 🚀 System Architecture
+## 🚀 Quick Start
 
-- **Frontend**: Next.js (App Router, TypeScript, TailwindCSS, Lucide Icons, Axios)
-- **Backend**: Node.js & Express (TypeScript, JSON Web Tokens (JWT), Bcrypt password hashing)
-- **Database / ORM**: Prisma ORM with support for PostgreSQL (via Docker Compose) and SQLite (for development)
+**First time setting up?** Follow the [Complete Setup Guide](SETUP_GUIDE.md) for detailed instructions.
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18+)
+- [Docker](https://www.docker.com/) (optional, for PostgreSQL)
+
+### 5-Minute Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/delaacademics/pharms.git
+   cd pharms
+   ```
+
+2. **Configure environment files:**
+   ```bash
+   cp backend/.env.example backend/.env
+   cp frontend/.env.example frontend/.env.local
+   ```
+
+3. **Start the database (Docker):**
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **Run both servers:**
+   - **Windows:** Double-click `start.bat`
+   - **Mac/Linux:** `chmod +x start.sh && ./start.sh`
+   - **Manual:** Open 2 terminals and run:
+     ```bash
+     # Terminal 1: Backend
+     cd backend && npm install && npm run dev
+     
+     # Terminal 2: Frontend
+     cd frontend && npm install && npm run dev
+     ```
+
+5. **Access the app:**
+   - Frontend: **http://localhost:3000**
+   - Backend: **http://localhost:5000**
 
 ---
 
@@ -53,59 +90,165 @@ Dedicated user accounts and specialized dashboard panels for:
 
 ```
 pharms/
-├── frontend/             # Next.js Frontend Application
-│   ├── src/app/          # Page router / views (login, dashboard, patient portal)
-│   ├── src/context/      # React contexts (Authentication State)
+├── frontend/                   # Next.js Frontend Application
+│   ├── src/app/                # Pages and routes
+│   ├── src/components/         # Reusable React components
+│   ├── src/context/            # React context (Auth state)
+│   ├── .env.example            # Environment variables template
 │   └── package.json
-├── backend/              # Node.js Express Backend API
-│   ├── prisma/           # Prisma DB schema & seed scripts
-│   ├── index.ts          # Core API endpoints & logic
+├── backend/                    # Node.js Express Backend API
+│   ├── prisma/                 # Database schema & migrations
+│   ├── src/                    # Backend source code
+│   ├── index.ts                # Main server file
+│   ├── .env.example            # Environment variables template
 │   └── package.json
-├── docker-compose.yml    # PostgreSQL Container Config
-└── start.bat             # Combined Windows startup script
+├── docker-compose.yml          # PostgreSQL container configuration
+├── start.bat                   # Windows startup script
+├── start.sh                    # Mac/Linux startup script
+├── SETUP_GUIDE.md              # Detailed setup instructions
+├── TROUBLESHOOTING.md          # Common issues & solutions
+└── CONTRIBUTING.md             # Contribution guidelines
 ```
 
 ---
 
-## 🛠️ Installation & Setup
+## 🛠️ System Architecture
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18+ recommended)
-- [Docker](https://www.docker.com/) (optional, for PostgreSQL DB container)
+- **Frontend**: Next.js (App Router, TypeScript, TailwindCSS, Lucide Icons, Axios)
+- **Backend**: Node.js & Express (TypeScript, JSON Web Tokens (JWT), Bcrypt password hashing)
+- **Database / ORM**: Prisma ORM with support for:
+  - PostgreSQL (via Docker Compose) - Recommended for production
+  - SQLite (for local development)
 
-### Step 1: Clone & Configure
-1. Clone this repository to your local machine.
-2. In the `backend` folder, copy the environment file and configure your settings:
-   - Configure your Database Connection URL and `JWT_SECRET`.
+---
 
-### Step 2: Database Setup
-You can use Postgres via Docker:
-```bash
-docker-compose up -d
+## 📖 Documentation
+
+| Document | Purpose |
+|----------|---------|
+| [SETUP_GUIDE.md](SETUP_GUIDE.md) | Complete step-by-step setup guide for all operating systems |
+| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Solutions for common issues and errors |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Guidelines for contributing to the project |
+
+---
+
+## 🚦 Getting Started in Detail
+
+### For First-Time Setup
+Follow the [Complete Setup Guide](SETUP_GUIDE.md) which includes:
+- Environment configuration
+- Database setup (Docker or SQLite)
+- Dependency installation
+- Running the application
+- Accessing test accounts
+
+### For Troubleshooting
+Check the [Troubleshooting Guide](TROUBLESHOOTING.md) for solutions to:
+- Port conflicts
+- Database connection issues
+- Missing dependencies
+- And more!
+
+### For Contributing
+Review [CONTRIBUTING.md](CONTRIBUTING.md) for:
+- Development guidelines
+- Code style conventions
+- How to submit pull requests
+- How to report issues
+
+---
+
+## 🔐 Environment Variables
+
+### Backend (.env)
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/hospital_db"
+JWT_SECRET="your-secret-key"
+PORT=5000
+NODE_ENV=development
 ```
-Then run migrations to set up the schemas:
-```bash
-cd backend
-npx prisma migrate dev
+
+### Frontend (.env.local)
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+PORT=3000
 ```
 
-### Step 3: Run the Application
-You can run both servers concurrently using the Windows startup script:
-1. Double-click `start.bat` in the root folder.
+See `.env.example` files in each directory for templates.
 
-Alternatively, launch them manually:
-* **Backend**:
-  ```bash
-  cd backend
-  npm install
-  npm run dev
-  ```
-* **Frontend**:
-  ```bash
-  cd frontend
-  npm install
-  npm run dev
-  ```
+---
 
-* Access the portal at: **`http://localhost:3000`**
-* Backend API documentation / server runs on: **`http://localhost:5000`**
+## 🧪 Testing the Application
+
+### Test Accounts (after database seed)
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@hospital.com | admin123 |
+| Doctor | doctor@hospital.com | doctor123 |
+| Nurse | nurse@hospital.com | nurse123 |
+| Pharmacist | pharmacist@hospital.com | pharmacist123 |
+| Finance | finance@hospital.com | finance123 |
+| Patient | patient@hospital.com | patient123 |
+
+*Note: Actual credentials depend on your database seed file.*
+
+---
+
+## 🐛 Common Issues
+
+### Port Already in Use
+```bash
+# Windows
+netstat -ano | findstr :3000
+
+# Mac/Linux
+lsof -i :3000
+```
+
+### Database Connection Error
+1. Ensure Docker is running: `docker ps`
+2. Start containers: `docker-compose up -d`
+3. Wait 10-15 seconds for PostgreSQL to initialize
+
+### Frontend Can't Connect to Backend
+1. Verify backend is running at http://localhost:5000
+2. Check `NEXT_PUBLIC_API_URL` in `frontend/.env.local`
+3. Restart frontend: `npm run dev`
+
+**For more solutions, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md)**
+
+---
+
+## 📱 Browser Support
+
+- Chrome/Chromium (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+---
+
+## 📝 License
+
+This project is provided as-is. See LICENSE file for details (if applicable).
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests.
+
+---
+
+## 💬 Support & Questions
+
+- **Issues:** [GitHub Issues](https://github.com/delaacademics/pharms/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/delaacademics/pharms/discussions)
+- **Setup Help:** See [SETUP_GUIDE.md](SETUP_GUIDE.md)
+- **Errors?** Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+
+---
+
+**Last Updated:** June 2026  
+**Status:** Active Development
